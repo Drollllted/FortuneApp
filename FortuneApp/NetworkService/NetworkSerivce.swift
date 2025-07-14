@@ -12,7 +12,7 @@ class NetworkSerivce {
     
     private init(){}
     
-    func setupJSON() {
+    func setupJSON(completion: @escaping (Result<WelcomeJSON, Error>) -> Void) {
         let url = "https://api.imgflip.com/get_memes"
         
         guard let urlString = URL(string: url) else {return}
@@ -21,10 +21,12 @@ class NetworkSerivce {
             guard let data = data else {return}
             
             do{
-                let json = String(data: data, encoding: .utf8)
+                let jsonDecoder = JSONDecoder()
+                let json = try jsonDecoder.decode(WelcomeJSON.self, from: data)
                 print(json)
+                completion(.success(json))
             } catch {
-                
+                print(error.localizedDescription)
             }
         }
         task.resume()
